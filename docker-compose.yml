@@ -1,0 +1,24 @@
+version: '3.3'
+
+
+services:
+    backend:
+        container_name: django-service
+        build:
+            context: .
+            dockerfile: Dockerfile
+        command: 'gunicorn rest_service.wsgi:application --bind 0.0.0.0:8000'
+        # ports:
+        #     - 8000:8000
+        volumes:
+            - .:/app       # to oznacza ze zmiana w biezacym katalogu bedzie zmiana w /app kontenera
+        restart: on-failure
+
+    nginx:
+        container_name: deploy_nginx
+        build: ./nginx
+        container_name: nginx_container
+        ports:
+            - 8080:80
+        depends_on:
+            - backend
